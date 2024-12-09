@@ -1,0 +1,229 @@
+// vim:ft=jsonc
+{
+  "layer": "top",
+  "position": "top",
+  "height": 25,
+  "margin-left": 5,
+  "margin-right": 5,
+  "margin-top": 5,
+  "margin-bottom": 0,
+  "spacing": 1,
+  "reload_style_on_change": true,
+
+  // Choose the order of the modules
+
+  "modules-left": ["river/tags", "tray"],
+
+  //"modules-center": ["clock"],
+
+  "modules-right": [
+    "memory",
+    "cpu",
+    "backlight",
+    "wireplumber",
+    "clock",
+    "custom/separator",
+    "group/custom-group",
+    "custom/separator",
+    "custom/power",
+  ],
+
+  "group/custom-group": {
+    "orientation": "horizontal",
+    "modules": [
+      "battery",
+      "custom/bluetooth",
+      "custom/wifi",
+    ]
+  },
+
+  "river/tags": {
+    "num-tags": 6,
+    "tag-labels": ["[WWW]", "[TERM]", "[FILE]", "[MISC]", "[IRC]", "[DEV]", "", "", ""],
+  },
+
+  "tray": {
+    "icon-size": 16,
+    "spacing": 5,
+    "show-passive-items": true,
+  },
+
+  "clock": {
+    "interval": 60,
+    "format": "[DATE] {:%a %b %d  [TIME] %I:%M %p}", // %b %d %Y  --Date formatting
+    "tooltip-formatzzz": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+    "format-alt": "{:%Y-%m-%d %H:%M:%S [TIME] }",
+  },
+
+  "cpu": {
+    "format": " {usage:>2}%",
+    "tooltip": false,
+    // "on-click": "hyprctl dispatcher togglespecialworkspace monitor",
+  },
+
+  "memory": {
+    "interval": 2,
+    "format": " {:>2}%",
+  },
+
+  "backlight": {
+    // "device": "acpi_video1",
+    "format": "{icon} {percent:>2}%",
+    "format-icons": ["", "", "", "", "", "", "", "", ""],
+  },
+
+  "network": {
+    // "interface": "wlp2*", // (Optional) To force the use of this interface
+    "interval": 1,
+    "format-wifi": "  {bandwidthTotalBytes:>2}", //({essid} {signalStrength}%)
+    "format-ethernet": "{ipaddr}/{cidr} ",
+    "tooltip-format-wifi": " {ipaddr} ({signalStrength}%)",
+    "tooltip-format": "{ifname} via {gwaddr} ",
+    "format-linked": "{ifname} (No IP) ",
+    "format-disconnected": "󰀦 Disconnected", //Disconnected ⚠
+    "format-alt": "{ifname}: {ipaddr}/{cidr}",
+  },
+
+  "wireplumber": {
+    "format": "{icon} {volume:>3}%",
+    "format-muted": "󰖁 {volume:>3}%",
+    // "format-bluetooth": "{icon} {volume:>2}% 󰂯", //{format_source}",
+    // "format-bluetooth-muted": "󰖁 {icon} 󰂯", //{format_source}",
+    "format-icons": ["", "", ""],
+  },
+
+  // This waybar build doesn't have support for cava.
+  // Need to edit the PKGBUILD and rebuild with -Dcava=enabled flag
+  "cava": {
+    "cava_config": "$XDG_CONFIG_HOME/cava/config",
+    "framerate": 30,
+    "autosens": 1,
+    "sensitivity": 100,
+    "bars": 14,
+    "lower_cutoff_freq": 50,
+    "higher_cutoff_freq": 10000,
+    "method": "pulse",
+    "source": "auto",
+    "stereo": true,
+    "reverse": false,
+    "bar_delimiter": 0,
+    "monstercat": false,
+    "waves": false,
+    "noise_reduction": 0.77,
+    "input_delay": 2,
+    "format-icons": ["▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"],
+    "actions": {
+      "on-click-right": "mode",
+    },
+  },
+
+  "idle_inhibitor": {
+    "format": "{icon}",
+    "format-icons": {
+      "activated": "󰈈",
+      "deactivated": "󰈉",
+    },
+  },
+
+  "custom/power": {
+    "format": "{icon}",
+    "format-icons": " ",
+    "exec-on-event": "true",
+    //"on-click": "$HOME/scripts/rofi-power",
+    "tooltip-format": "Power Menu",
+  },
+
+  "custom/bluetooth": {
+    "format": "{icon}",
+    "format-icons": "",
+    "exec-on-event": "true",
+    //"on-click": "$HOME/scripts/rofi-bluetooth",
+    "tooltip-format": "Bluetooth Menu",
+  },
+
+  "custom/wifi": {
+    "format": "{icon}",
+    "format-icons": "",
+    "exec-on-event": "true",
+    "on-click": "nmtui",
+    "tooltip-format": "Wifi Menu",
+  },
+
+  "custom/separator": {
+    "format": "{icon}",
+    "format-icons": "|",
+    "tooltip": false,
+  },
+
+  "custom/pacman": {
+    "format": "  {}",
+    "interval": 3600, // every hour
+    "exec": "checkupdates | wc -l", // # of updates
+    "exec-if": "exit 0", // always run; consider advanced run conditions
+    "on-click": "kitty -e 'sudo pacman -Syu'; pkill -SIGRTMIN+8 waybar", // update system
+    "signal": 8,
+  },
+
+  "custom/notification": {
+    "tooltip": false,
+    "format": "{icon} {}",
+    "format-icons": {
+      "notification": "<span foreground='red'><sup></sup></span>",
+      "none": "",
+      "dnd-notification": "<span foreground='red'><sup></sup></span>",
+      "dnd-none": "",
+      "inhibited-notification": "<span foreground='red'><sup></sup></span>",
+      "inhibited-none": "",
+      "dnd-inhibited-notification": "<span foreground='red'><sup></sup></span>",
+      "dnd-inhibited-none": "",
+    },
+    "return-type": "json",
+    "exec-if": "which swaync-client",
+    "exec": "swaync-client -swb",
+    "on-click": "swaync-client -t -sw",
+    "on-click-right": "swaync-client -d -sw",
+    "escape": true,
+  },
+
+  "keyboard-state": {
+    "numlock": true,
+    "capslock": true,
+    "format": "{name} {icon}",
+    "format-icons": {
+      "locked": "",
+      "unlocked": "",
+    },
+  },
+
+  "wlr/taskbar": {
+    "format": "{icon}",
+    "icon-size": 18,
+    "tooltip-format": "{title}",
+    "on-click": "activate",
+    "on-click-middle": "close",
+    "ignore-list": ["kitty", "wezterm", "foot", "footclient"],
+  },
+
+  "battery": {
+    "states": {
+      // "good": 95,
+      "warning": 30,
+      "critical": 15,
+    },
+    "format": "{capacity}%",
+    "format-charging": " {capacity}%",
+    "format-plugged": " {capacity}%",
+    "format-alt": "{icon}",
+    "format-alt": "{time}",
+    // "format-good": "", // An empty format will hide the module
+    // "format-full": "",
+    "format-icons": ["", "", "", "", ""],
+  },
+
+  "backlight/slider": {
+    "min": 0,
+    "max": 100,
+    "orientation": "horizontal",
+    "device": "intel_backlight",
+  },
+}
